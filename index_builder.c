@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#define SIZE 4000
+#define SIZE 15000
 struct node1
 {
     char word[100];
@@ -21,7 +21,7 @@ struct node2
 };
 typedef struct node2 Propety;
 
-int Tokenizer (char *filein,char str[],Term head[]);
+int Tokenizer (char *filein,Term head[]);
 char Lowercase (char letter);
 void Firstlettersort(Term head[],int sizrofterm);
 void Relvancesort (Term head[],int sizeofterm);
@@ -36,10 +36,9 @@ void main()
     int n = 0;
     int i = 0;
     Term head[SIZE];
-    char str[100];
     char dirent[100];
     char temp_dirent[100];
-    for(i = 0;i <SIZE;i ++)
+    for(i = 0;i < SIZE;i ++)
     {
         strcpy(head[i].word,"0");
         head[i].df = 0;
@@ -54,30 +53,31 @@ void main()
     }
     else
     {
-        if((strncmp(ptr->d_name,"text_",5)) == 0)
-        {   
+        //if((strncmp(ptr->d_name,"text_",5)) == 0)
+        //{   
             strcpy(temp_dirent,dirent);
             printf("d_name:%s\n",ptr->d_name);
             strcat(temp_dirent,"/");
             strcat(temp_dirent,ptr->d_name);
             printf("dirent name:%s\n",temp_dirent);
-            n = Tokenizer(temp_dirent,str,head);
+            n = Tokenizer(temp_dirent,head);
             printf("%d\n",n);
-        }
+        //}
         while((ptr = readdir(dir)) != NULL)
         {
-            if((strncmp(ptr->d_name,"text_",5)) == 0)
-            {   
+            //if((strncmp(ptr->d_name,"text_",5)) == 0)
+            //{ 
                 strcpy(temp_dirent,dirent);
                 printf("d_name:%s\n",ptr->d_name);
                 strcat(temp_dirent,"/");
                 strcat(temp_dirent,ptr->d_name);
                 printf("dirent name:%s\n",temp_dirent);
-                n = Tokenizer(temp_dirent,str,head);
+                n = Tokenizer(temp_dirent,head);
                 printf("%d\n",n);
-            }
+            //}
         }
     }
+    closedir(dir);
     Firstlettersort(head,n);
     Relvancesort(head,n);
     Saveindex(head,n,"indexfile");
@@ -94,9 +94,10 @@ char Lowercase(char letter)
 }
 
 //将文档分为一个一个单独的单词,并去除标点
-int Tokenizer (char *filein,char str[],Term head[])
+int Tokenizer (char *filein,Term head[])
 {
     FILE *fpi;
+    char str[100];
     if((fpi = fopen(filein,"r")) == NULL)
     {
          printf("this file can not be opened.\n");
@@ -114,10 +115,13 @@ int Tokenizer (char *filein,char str[],Term head[])
         while(ch != ' ' && ch != EOF)//每获得一个字母循环一次
         {
             ch = Lowercase (ch);//将大写字母变成小写
-            if((ch >= 97 && ch <=122) || (ch >= 48 && ch <= 57))//去除所有非小写字母的字符
+            if((ch >= 97 && ch <=122))//去除所有非小写字母的字符
             {
                 str[i] = ch;
-                i ++;
+		if(i < 100)
+		{
+                     i ++;
+		}
             }
             ch = fgetc(fpi);//获取下一个字符
         }

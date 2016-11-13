@@ -5,7 +5,7 @@
 #include <dirent.h>
 #include <ctype.h>
 
-#define SIZE 4000
+#define SIZE 15000
 struct node1
 {
     char word[100];
